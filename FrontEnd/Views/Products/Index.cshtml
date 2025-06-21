@@ -49,7 +49,10 @@
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "EditProduct", "Products", new { id = item.Id }, new { @class = "btn btn-default" })
-                        @Html.ActionLink("Delete", "DeleteProduct", "Products", new { id = item.Id }, new { @class = "btn btn-danger" })
+                        <form asp-controller="Products" asp-action="DeleteProduct" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
+                        </form>
                     </td>
                 </tr>
             </tbody>

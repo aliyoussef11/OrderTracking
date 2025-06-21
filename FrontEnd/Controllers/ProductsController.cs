@@ -46,6 +46,8 @@ namespace FrontEnd.Controllers
         public async Task<IActionResult> Create(ProductDTO productDTO)
         {
             // 1) Call the gateway
+            var token = Request.Cookies["access_token"];
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.PostAsJsonAsync("/api/products", productDTO);
 
             if (!response.IsSuccessStatusCode)
@@ -55,7 +57,7 @@ namespace FrontEnd.Controllers
                 return View(productDTO);
             }
 
-            TempData["SuccessMessage"] = "Products created successfully!";
+            TempData["SuccessMessage"] = $"Product {productDTO.Name} created successfully!";
             return RedirectToAction("Index", "Products");
         }
 
@@ -63,6 +65,8 @@ namespace FrontEnd.Controllers
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             // 1) Call the gateway
+            var token = Request.Cookies["access_token"];
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.DeleteAsync($"/api/products/{id}");
 
             if (!response.IsSuccessStatusCode)

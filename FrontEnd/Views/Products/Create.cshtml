@@ -8,7 +8,7 @@
                     <h5 class="mb-0">Create Order</h5>
                 </div>
                 <div class="card-body">
-                    <form action="@Url.Action("Create","Products", new { ReturnUrl = ViewBag.ReturnUrl })">
+                    <form asp-action="Create" asp-controller="Products" method="post">
                         @Html.AntiForgeryToken()
 
                         <div class="form-group row mt-3">

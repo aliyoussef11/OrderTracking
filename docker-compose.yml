@@ -49,7 +49,7 @@ services:
     image: ordertracking_order
     container_name: ordertracking_order
     environment:
-      - ConnectionStrings__ProductDb=Host=postgres;Database=postgres_db;Username=postgres_user;Password=postgres_pass
+      - ConnectionStrings__OrderDb=Host=postgres;Database=postgres_db;Username=postgres_user;Password=postgres_pass
     networks:
       - app-network
     depends_on:

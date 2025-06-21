@@ -8,5 +8,6 @@
         public decimal Total { get; set; }
         public Guid ClientId { get; set; }
         public DateTime OrderDate { get; set; }
+        public string ProductName  { get; set; }
     }
 }

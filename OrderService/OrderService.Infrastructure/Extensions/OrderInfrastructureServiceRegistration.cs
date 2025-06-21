@@ -17,7 +17,7 @@ namespace OrderService.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<OrderDbContext>(options =>
-                    options.UseNpgsql(config.GetConnectionString("ProductDb")));
+                    options.UseNpgsql(config.GetConnectionString("OrderDb")));
 
             services.AddScoped<IOrderRepository, OrderRepository>();
 

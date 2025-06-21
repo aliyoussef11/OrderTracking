@@ -34,24 +34,45 @@ namespace FrontEnd.Controllers
 
             var orders = await response.Content.ReadFromJsonAsync<List<OrderDTO>>();
 
+            if(orders != null && orders.Any())
+                foreach(var order in orders)
+                {
+                    var productResponse = await _httpClient.GetAsync($"/api/products/{order.ProductId}");
+                    if(productResponse != null)
+                    {
+                        var product = await productResponse.Content.ReadFromJsonAsync<ProductDTO>();
+
+                        if (product != null)
+                            order.ProductName = product.Name;
+                    }                 
+                }
+            
+
             return View(orders);
         }
 
 
         public async Task<IActionResult> Create()
         {
+            var token = Request.Cookies["access_token"];
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             // get all the products to show in the selector
             var response = await _httpClient.GetAsync("/api/products");
             var products = await response.Content.ReadFromJsonAsync<List<ProductDTO>>();
 
 
-            return View("CreateOrder", products);
+            return View("CreateOrder", new CreateOrderViewModel
+            {
+                Products = products
+            });
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderViewModel viewModel)
+        public async Task<IActionResult> Create(CreateOrderViewModel viewModel)
         {
             // 1) Call the gateway
+            var token = Request.Cookies["access_token"];
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.PostAsJsonAsync("/api/orders", viewModel.Order);
 
             if (!response.IsSuccessStatusCode)
@@ -69,6 +90,8 @@ namespace FrontEnd.Controllers
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
             // 1) Call the gateway
+            var token = Request.Cookies["access_token"];
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.DeleteAsync($"/api/orders/{id}");
 
             if (!response.IsSuccessStatusCode)

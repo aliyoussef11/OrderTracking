@@ -31,7 +31,10 @@ namespace OrderService.Infrastructure.Persistence.Configurations
                    .IsRequired();
 
             builder.Property(o => o.OrderDate)
-                   .IsRequired();
+                .HasConversion(
+                v => v.ToUniversalTime(),      // When saving
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc))// When reading
+                .IsRequired();
 
             builder.Property(o => o.LoggedInEmployeeId)
                    .IsRequired();

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OrderService.Application.UseCases.Interfaces;
+using OrderService.Domain.Entities;
 using Shared.Common.DTOs;
 
 namespace OrderService.API.Controllers
@@ -51,6 +52,12 @@ namespace OrderService.API.Controllers
 
             try
             {
+                
+                var employeeId = Guid.Parse(Request.Headers["Header-EmployeeId"].ToString());
+
+                orderDto.Id = Guid.NewGuid();
+                orderDto.LoggedInEmployeeId = employeeId;
+
                 var success = await _iCRUDOrderUseCase.AddAsync(orderDto);
 
                 if (success)
