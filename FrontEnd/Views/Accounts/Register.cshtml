@@ -1,0 +1,50 @@
+﻿@model FrontEnd.Models.RegisterDTO
+
+<div class="container" style="padding-top: 70px;">
+    <!-- adjust 70px to your navbar height -->
+    <div class="row justify-content-center align-items-start">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h5 class="mb-0">Register</h5>
+                </div>
+                <div class="card-body">
+                    <form action="@Url.Action("Register","Accounts", new { ReturnUrl = ViewBag.ReturnUrl })"
+                          method="post"
+                          class="form-horizontal"
+                          role="form">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group row">
+                            @Html.LabelFor(m => m.Email, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row mt-3">
+                            <!-- adds margin-top -->
+                            @Html.LabelFor(m => m.Password, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row mt-3">
+                            <!-- adds margin-top above the button -->
+                            <div class="col-sm-8 offset-sm-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    Register
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

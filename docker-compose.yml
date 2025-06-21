@@ -1,0 +1,98 @@
+services:
+  postgres:
+    image: postgres
+    container_name: ordertracking_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_pass
+      POSTGRES_DB: postgres_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+      
+  auth-service:
+    build:
+      context: ./AuthService
+      dockerfile: AuthService.API/Dockerfile
+      # args:
+      #   BUILD_CONFIGURATION: Debug
+    image: ordertracking_auth
+    container_name: ordertracking_auth
+    environment:
+      - ConnectionStrings__AuthDb=Host=postgres;Database=postgres_db;Username=postgres_user;Password=postgres_pass
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    
+  product-service:
+    build:
+      context: ./ProductService
+      dockerfile: ProductService.API/Dockerfile
+    image: ordertracking_product
+    container_name: ordertracking_product
+    environment:
+      - ConnectionStrings__ProductDb=Host=postgres;Database=postgres_db;Username=postgres_user;Password=postgres_pass
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  order-service:
+    build:
+      context: ./OrderService
+      dockerfile: OrderService.API/Dockerfile
+    image: ordertracking_order
+    container_name: ordertracking_order
+    environment:
+      - ConnectionStrings__ProductDb=Host=postgres;Database=postgres_db;Username=postgres_user;Password=postgres_pass
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  api-gateway:
+    image: api-gateway
+    container_name: ordertracking_gateway
+    build:
+      context: ./APIGateway
+      dockerfile: APIGateway.API/Dockerfile
+    environment:    
+      - ReverseProxy__Clusters__productsCluster__Destinations__productService__Address=http://product-service:8080
+      - ReverseProxy__Clusters__ordersCluster__Destinations__orderService__Address=http://order-service:8080
+      - ReverseProxy__Clusters__authCluster__Destinations__authService__Address=http://auth-service:8080
+    ports:
+      - "8080:8080" 
+    depends_on:
+      - auth-service
+      - product-service
+      - order-service
+    networks:
+      - app-network
+    
+  front-end:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        # - DOTNET_PRINT_TELEMETRY_MESSAGE=false
+    ports:
+      - "3000:8080"
+    depends_on:
+      - api-gateway
+    networks:
+      - app-network
+    # volumes:
+    # - frontend_keyring:/app/keys
+   
+volumes:
+  postgres_data:
+  # frontend_keyring:
+
+networks:
+  app-network: {}

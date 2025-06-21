@@ -1,0 +1,59 @@
+﻿@model IEnumerable<FrontEnd.Models.ProductDTO>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+@section Scripts {
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#Products').dataTable();
+        });
+    </script>
+}
+<br />
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3 mx-3" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<br />
+<p>
+    @Html.ActionLink("Add New Product", "Create", "Products", new { @class = "btn btn-primary" })
+</p>
+<br />
+<body>
+    <table id="Products">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Price
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        @foreach (var item in Model)
+        {
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditProduct", "Products", new { id = item.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionLink("Delete", "DeleteProduct", "Products", new { id = item.Id }, new { @class = "btn btn-danger" })
+                    </td>
+                </tr>
+            </tbody>
+        }
+
+    </table>
+</body>

@@ -1,0 +1,43 @@
+﻿@model FrontEnd.Models.ProductDTO
+
+<div class="container" style="padding-top: 70px;">
+    <div class="row justify-content-center align-items-start">
+        <div class="col-md-6 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header text-center">
+                    <h5 class="mb-0">Create Order</h5>
+                </div>
+                <div class="card-body">
+                    <form action="@Url.Action("Create","Products", new { ReturnUrl = ViewBag.ReturnUrl })">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group row mt-3">
+                            @Html.LabelFor(m => m.Name, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", type = "text" })
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group row mt-3">
+                            @Html.LabelFor(m => m.Price, htmlAttributes: new { @class = "col-sm-4 col-form-label" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", type = "number", step = "0.01" })
+                                @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row mt-4">
+                            <div class="col-sm-8 offset-sm-4">
+                                <button type="submit" class="btn btn-success w-100">
+                                    Submit Product
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

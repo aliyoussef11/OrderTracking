@@ -1,0 +1,77 @@
+﻿@model IEnumerable<FrontEnd.Models.OrderDTO>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+@section Scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#Orders').dataTable();
+        });
+    </script>
+}
+<br />
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3 mx-3" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<br />
+<p>
+    @Html.ActionLink("Add New Order", "CreateOrder", "Orders", new { @class = "btn btn-primary" })
+</p>
+<br />
+<body>
+    <table id="Orders">
+        <thead>
+            <tr>
+                <th>
+                    Product
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    Client
+                </th>
+                <th>
+                    Order Date
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+
+        @foreach (var item in Model)
+        {
+            <tbody>
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Total)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ClientId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderDate)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditOrder", "Orders", new { id = item.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionLink("Delete", "DeleteOrder", "Order", new { id = item.Id }, new { @class = "btn btn-danger" })
+                    </td>
+                </tr>
+            </tbody>
+        }
+
+    </table>
+</body>
