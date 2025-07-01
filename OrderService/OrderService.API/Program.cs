@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OrderService.Application.Commands;
 using OrderService.Application.Mappings;
 using OrderService.Application.UseCases;
 using OrderService.Application.UseCases.Interfaces;
@@ -24,6 +25,9 @@ builder.Services.AddAutoMapper(typeof(OrderProfile).Assembly);
 // Serilog
 builder.Host.UseSerilog((ctx, config) =>
     config.ReadFrom.Configuration(ctx.Configuration));
+
+// Mediator
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateOrderCommand>());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

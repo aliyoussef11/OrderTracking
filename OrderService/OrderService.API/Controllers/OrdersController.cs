@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OrderService.Application.Commands;
+using OrderService.Application.Queries;
 using OrderService.Application.UseCases.Interfaces;
 using OrderService.Domain.Entities;
 using Shared.Common.DTOs;
@@ -13,11 +16,13 @@ namespace OrderService.API.Controllers
     {
         private readonly ICRUDOrderUseCase _iCRUDOrderUseCase;
         private readonly ILogger<OrdersController> _logger;
+        private readonly IMediator _mediator;
 
-        public OrdersController(ICRUDOrderUseCase iCRUDOrderUseCase, ILogger<OrdersController> logger)
+        public OrdersController(ICRUDOrderUseCase iCRUDOrderUseCase, ILogger<OrdersController> logger, IMediator mediator)
         {
             _iCRUDOrderUseCase = iCRUDOrderUseCase;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -46,34 +51,33 @@ namespace OrderService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromBody] OrderDTO orderDto)
+        public async Task<IActionResult> Add([FromBody] CreateOrderCommand command)
         {
-            _logger.LogInformation("Request received: Add order {@Order}", orderDto);
+            _logger.LogInformation("Request received: Add order {@Order}", command);
 
             try
             {
-                
                 var employeeId = Guid.Parse(Request.Headers["Header-EmployeeId"].ToString());
 
-                orderDto.Id = Guid.NewGuid();
-                orderDto.LoggedInEmployeeId = employeeId;
+                command.Id = Guid.NewGuid();
+                command.LoggedInEmployeeId = employeeId;
 
-                var success = await _iCRUDOrderUseCase.AddAsync(orderDto);
+                var addedGuid = await _mediator.Send(command);
 
-                if (success)
+                if (addedGuid != Guid.Empty)
                 {
-                    _logger.LogInformation("Order added successfully: {@Order}", orderDto);
+                    _logger.LogInformation("Order added successfully: {@Order} - {@Id})", command, addedGuid);
                     return Ok("Order added successfully.");
                 }
                 else
                 {
-                    _logger.LogWarning("Failed to add order: {@Order}", orderDto);
+                    _logger.LogWarning("Failed to add order: {@Order}", command);
                     return BadRequest("Failed to add order.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred while adding order: {@Order}", orderDto);
+                _logger.LogError(ex, "Exception occurred while adding order: {@Order}", command);
                 return StatusCode(500, "An error occurred while adding the order.");
             }
         }
@@ -139,7 +143,8 @@ namespace OrderService.API.Controllers
 
             try
             {
-                var order = await _iCRUDOrderUseCase.GetOrderById(id);
+                //var order = await _iCRUDOrderUseCase.GetOrderById(id);
+                var order = await _mediator.Send(new GetOrderByIdQuery(id));
 
                 if (order is null)
                 {
