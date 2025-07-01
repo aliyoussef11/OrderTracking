@@ -9,10 +9,10 @@ namespace OrderService.Domain.Interfaces
 {
     public interface IOrderRepository
     {            
-        Task AddAsync(Order order);
+        Task AddAsync(Order order, CancellationToken cancellationToken);
         Task UpdateAsync(Order order);
         Task DeleteAsync(Guid id);
-        Task<Order?> GetOrderByIdAsync(Guid id);
+        Task<Order?> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken);
         Task<List<Order>> GetAllByEmployeeIdAsync(Guid employeeId);
     }
 }

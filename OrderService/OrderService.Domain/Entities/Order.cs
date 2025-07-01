@@ -14,8 +14,19 @@ namespace OrderService.Domain.Entities
         public decimal Total { get; set; }
         public Guid ClientId { get; set; }
         public DateTime OrderDate { get; set; }
-
-        // Logged In User
         public Guid LoggedInEmployeeId { get; set; }
+
+        public Order() { }
+
+        public Order(Guid id, Guid productId, long quantity, decimal total, Guid clientId, DateTime orderDate, Guid loggedInUser)
+        {
+            Id = id;
+            ProductId = productId;
+            Quantity = quantity;
+            Total = total;
+            ClientId = clientId;
+            OrderDate = orderDate;
+            LoggedInEmployeeId = loggedInUser;
+        }
     }
 }

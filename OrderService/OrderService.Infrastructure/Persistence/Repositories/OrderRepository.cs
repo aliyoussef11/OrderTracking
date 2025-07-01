@@ -22,10 +22,10 @@ namespace OrderService.Infrastructure.Persistence.Repositories
         #endregion
 
         #region Public Functions
-        public async Task AddAsync(Order order)
+        public async Task AddAsync(Order order, CancellationToken cancellationToken)
         {
             await _orderDbContext.Orders.AddAsync(order);
-            await _orderDbContext.SaveChangesAsync();
+            await _orderDbContext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(Guid id)
@@ -43,9 +43,9 @@ namespace OrderService.Infrastructure.Persistence.Repositories
             return await _orderDbContext.Orders.AsNoTracking().Where(x => x.LoggedInEmployeeId == employeeId).ToListAsync();
         }
 
-        public async Task<Order?> GetOrderByIdAsync(Guid id)
+        public async Task<Order?> GetOrderByIdAsync(Guid id, CancellationToken cancellationToken)
         {
-            return await _orderDbContext.Orders.FirstOrDefaultAsync(ord => ord.Id == id);
+            return await _orderDbContext.Orders.FirstOrDefaultAsync(ord => ord.Id == id, cancellationToken);
         }
 
         public async Task UpdateAsync(Order order)
